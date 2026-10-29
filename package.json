@@ -1,0 +1,10 @@
+{
+  "name": "pi-pause",
+  "version": "0.1.0",
+  "description": "Gracefully pause Pi at safe execution boundaries without disrupting the KV cache.",
+  "type": "module",
+  "keywords": ["pi-package"],
+  "pi": { "extensions": ["./src/index.js"] },
+  "scripts": { "check": "node --check src/index.js && node --check scripts/patch.mjs && node --check scripts/changes.mjs", "test": "node --test test/*.test.mjs" },
+  "peerDependencies": { "@earendil-works/pi-coding-agent": "*" }
+}
