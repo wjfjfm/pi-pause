@@ -33,9 +33,12 @@ export async function patch(root, { restore = false, check = false } = {}) {
     return 'Restored; restart Pi';
   }
   if (restore) throw new Error('No installed patch manifest');
+  let version;
   for (const name of ['pi-coding-agent', 'pi-agent-core']) {
     const pkg = JSON.parse(await readFile(join(root, name, 'package.json'), 'utf8'));
-    if (pkg.version !== '1.3.0') throw new Error(`Unsupported ${name} version: ${pkg.version}`);
+    if (!['1.3.0', '1.4.0'].includes(pkg.version)) throw new Error(`Unsupported ${name} version: ${pkg.version}`);
+    if (version && version !== pkg.version) throw new Error('Mismatched Pi package versions');
+    version = pkg.version;
   }
   const files = new Map();
   for (const change of changes) {

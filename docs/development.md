@@ -14,7 +14,7 @@
 
 ## Setup
 
-Requires Pi 1.3.0. From this repository:
+Supports Pi 1.3.0 and 1.4.0 (matching coding-agent and agent-core versions). From this repository:
 
 ```bash
 node scripts/patch.mjs /path/to/node_modules/@earendil-works --check
@@ -26,9 +26,9 @@ Restart Pi; `/reload` does not reload core modules. To undo, run the same patch 
 
 ## Core patch
 
-`scripts/changes.mjs` contains exact edits to the published JS and declarations of `pi-coding-agent` and `pi-agent-core` 1.3.0. No source checkout or build is required. Other versions are rejected.
+`scripts/changes.mjs` contains exact edits to the published JS and declarations of `pi-coding-agent` and `pi-agent-core` 1.3.0 and 1.4.0. Their scheduling boundaries are unchanged, so both use the same edits. No source checkout or build is required. Other versions are rejected.
 
-`scripts/patch.mjs` validates every replacement before writing, backs up originals, and checks installed-file hashes before declaring an installation patched or restoring it. Backups live in `node_modules/@earendil-works/.pi-pause-backup`. Do not patch while an installation is being upgraded. Stop Pi first; restart after patching or restoring. A runtime upgrade may replace the patch; do not blindly apply it to a new version.
+`scripts/patch.mjs` validates every replacement before writing, backs up originals, and checks installed-file hashes before declaring an installation patched or restoring it. Backups live in `node_modules/@earendil-works/.pi-pause-backup`. Do not patch while an installation is being upgraded. Stop Pi first; restart after patching or restoring. A runtime upgrade replaces the patch or selects a new installation directory. Re-run `--check` and apply the patch to the new runtime, then restart. Unsupported versions must be reviewed before adding support; do not bypass the version check.
 
 ## Tests
 

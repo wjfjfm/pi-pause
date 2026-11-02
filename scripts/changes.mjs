@@ -1,4 +1,5 @@
-// Exact edits for the published 1.3.0 distribution. Never patch unknown versions.
+// Exact edits shared by the reviewed 1.3.0 and 1.4.0 distributions.
+// Their scheduling boundaries are unchanged. Never patch unknown versions.
 const changes = [];
 const add = (file, oldText, newText, count = 1) => changes.push({ file, oldText, newText, count });
 const session = 'pi-coding-agent/dist/core/agent-session.js';

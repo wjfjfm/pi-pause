@@ -8,7 +8,7 @@ import { patch } from '../scripts/patch.mjs';
 import extension from '../src/index.js';
 
 const installed = process.env.PI_PAUSE_NODE_MODULES;
-if (!installed) throw new Error('Set PI_PAUSE_NODE_MODULES to the Pi 1.3.0 runtime node_modules directory');
+if (!installed) throw new Error('Set PI_PAUSE_NODE_MODULES to a supported Pi runtime node_modules directory');
 const sandbox = await mkdtemp(join(tmpdir(), 'pi-pause-'));
 after(() => rm(sandbox, { recursive: true, force: true }));
 const modules = join(sandbox, 'node_modules');
@@ -206,6 +206,22 @@ test('pause while run starts is safe and does not call the provider',async t=>{
   h.session.requestPause();release.resolve();await running;
   assert.equal(h.requests.length,0);
   assert.equal(h.session.messages.some(m=>m.role==='assistant'),false);
+});
+
+test('patch rejects unknown and mismatched package versions before writing', async () => {
+  const root = join(sandbox, 'unsupported');
+  for (const [coding, core, expected] of [
+    ['1.5.0', '1.5.0', /Unsupported/],
+    ['1.4.0', '1.3.0', /Mismatched/],
+    ['1.3.0', '1.4.0', /Mismatched/],
+  ]) {
+    for (const [name, version] of [['pi-coding-agent', coding], ['pi-agent-core', core]]) {
+      await mkdir(join(root, name), { recursive: true });
+      await writeFile(join(root, name, 'package.json'), JSON.stringify({ version }));
+    }
+    await assert.rejects(() => patch(root), expected);
+    assert.deepEqual((await readdir(root)).sort(), ['pi-agent-core', 'pi-coding-agent']);
+  }
 });
 
 test('patch is idempotent and restore preserves exact originals',async()=>{
